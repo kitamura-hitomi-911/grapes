@@ -1,5 +1,7 @@
 import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs from 'grapesjs'
+// @ts-ignore
+import ja from './ja.js';
 import grapesJSMJML from 'grapesjs-mjml'
 import './style.css'
 
@@ -7,14 +9,21 @@ import './style.css'
 // import viteLogo from '/vite.svg'
 // import { setupCounter } from './counter.ts'
 
+
 console.log(grapesJSMJML)
 const editor = grapesjs.init({
   container : '#gjs',
+  i18n: {
+    // locale: 'en', // default locale
+    // detectLocale: true, // by default, the editor will detect the language
+    // localeFallback: 'en', // default fallback
+    messages: { ja },
+  },
   plugins:[grapesJSMJML],
   pluginsOpts: {
     [grapesJSMJML as any]: {
       useCustomTheme:false
-    }
+    },
   },
   storageManager: false,
   components: `<mjml>

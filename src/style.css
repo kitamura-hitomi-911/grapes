@@ -11,22 +11,63 @@ html {
 
 /* Primary color for the background */
 .gjs-one-bg {
-  background-color: #78366a;
+  background-color: #fff;/* #78366a */
 }
 
 /* Secondary color for the text color */
 .gjs-two-color {
-  color: rgba(255, 255, 255, 0.7);
+  color: #333333;
+  /* color: rgba(255, 255, 255, 0.7); */
 }
 
 /* Tertiary color for the background */
 .gjs-three-bg {
-  background-color: #ec5896;
+  background-color: #f0f0f0;
+  /* background-color: #ec5896; */
   color: white;
 }
 
 /* Quaternary color for the text color */
 .gjs-four-color,
 .gjs-four-color-h:hover {
-  color: #ec5896;
+  color: #6396dd;/* #ec5896 */
 }
+
+/* パネルとサイドバー > パネル全体のスタイルに使用 */
+.gjs-pn-panel{
+   background-color: #efefef 
+}
+
+/* 
+
+メインエディタ領域
+.gjs-editor: エディタ全体のコンテナ
+.gjs-frame: エディタのフレーム部分
+.gjs-cv-canvas: キャンバス領域
+.gjs-no-select: 選択不可の領域
+パネルとサイドバー
+.gjs-pn-panel: パネル全体のスタイルに使用
+.gjs-pn-views-container: パネル内のビューを囲むコンテナ
+.gjs-pn-buttons: サイドパネル内のボタン
+.gjs-pn-active: アクティブなパネルボタン
+ブロック管理・コンポーネント管理
+.gjs-block: 各ブロック要素
+.gjs-block-label: ブロックのラベル
+.gjs-block-content: ブロックのコンテンツ領域
+.gjs-clm-name: コンポーネントの名前
+.gjs-clm-label: ラベル付きのコンポーネント
+.gjs-clm-value: コンポーネントの値部分
+スタイルマネージャー
+.gjs-sm-properties: スタイルマネージャのプロパティ部分
+.gjs-sm-sector: スタイルのセクター部分
+.gjs-sm-sector-title: セクターのタイトル部分
+.gjs-sm-input-holder: スタイル入力欄
+その他UI
+.gjs-toolbar: ツールバー全体 ※各要素につくメニュー
+.gjs-toolbar-item: ツールバーの各アイテム
+.gjs-resizer: リサイズハンドル部分
+.gjs-tooltip: ツールチップ
+.gjs-frame-wrapper: キャンバスのフレームラッパー
+.gjs-pn-options: 設定オプションパネル
+
+*/
