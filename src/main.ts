@@ -1,17 +1,20 @@
 import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs from 'grapesjs'
+import grapesJsMjml from 'grapesjs-mjml'
+import grapesJsNewsletter from 'grapesjs-preset-newsletter';
 // @ts-ignore
 import ja from './ja.js';
-import grapesJSMJML from 'grapesjs-mjml'
+// @ts-ignore
+import mjmlJa from './mjml-ja.js'
 import './style.css'
 
 // import typescriptLogo from './typescript.svg'
 // import viteLogo from '/vite.svg'
 // import { setupCounter } from './counter.ts'
 
+const isMjml = false
 
-console.log(grapesJSMJML)
-const editor = grapesjs.init({
+const cmnInitObj = {
   container : '#gjs',
   i18n: {
     // locale: 'en', // default locale
@@ -19,43 +22,45 @@ const editor = grapesjs.init({
     // localeFallback: 'en', // default fallback
     messages: { ja },
   },
-  plugins:[grapesJSMJML],
+  storageManager: false,
+}
+const initObjForMjml={
+  plugins:[grapesJsMjml], 
   pluginsOpts: {
-    [grapesJSMJML as any]: {
-      useCustomTheme:false
+    [grapesJsMjml as any]: {
+      useCustomTheme:false,
+      i18n: { ja: mjmlJa }
     },
   },
-  storageManager: false,
   components: `<mjml>
-    <mj-body>
-      <!-- Your MJML body here -->
-      <mj-section>
-        <mj-column>
-          <mj-text>My Company</mj-text>
-        </mj-column>
-      </mj-section>
-    </mj-body>
-  </mjml>`,
-  style: `'.txt-red{color: red}'`,
+  <mj-body>
+    <!-- Your MJML body here -->
+    <mj-section>
+      <mj-column>
+        <mj-text>My Company</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>`,
+style: `'.txt-red{color: red}'`,
+} 
+
+const initObjForNewsletter={
+  plugins:[grapesJsNewsletter], 
+  pluginsOpts: {
+    [grapesJsNewsletter as any]: {
+      useCustomTheme:false,
+      i18n: { ja: mjmlJa }
+    },
+  },
+  components: `<div><h1>よろしく</h1></div>`,
+style: `'.txt-red{color: red}'`,
+} 
+
+console.log(grapesJsMjml)
+const editor = grapesjs.init({
+  ...cmnInitObj,
+  ...(isMjml? initObjForMjml:initObjForNewsletter)
 });
 console.log(editor)
-/* 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!) */

@@ -4,6 +4,10 @@ html {
   margin: 0;
 }
 
+:root {
+  --gjs-main-dark-color: #efefef;
+}
+
 #gjs {
   border: 3px solid #ccc;
   box-sizing: border-box;
@@ -38,6 +42,20 @@ html {
    background-color: #efefef 
 }
 
+/* サイドバーの見出し部分の余白を調整 */
+.gjs-category-title,
+.gjs-layer-title,
+.gjs-block-category,
+.gjs-title, 
+.gjs-sm-sector-title, 
+.gjs-trait-category .gjs-title{
+  padding:9px 10px;
+}
+
+/* Import MJML のボタン… */
+.gjs-btn-prim{
+  background-color: var(--gjs-main-dark-color);
+}
 /* 
 
 メインエディタ領域
@@ -71,3 +89,8 @@ html {
 .gjs-pn-options: 設定オプションパネル
 
 */
+
+.cm-s-hopscotch.CodeMirror {
+  background: #d5d3d5;
+  color: #322931;
+}

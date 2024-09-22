@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "grapesjs": "^0.21.12",
-    "grapesjs-mjml": "^1.0.5"
+    "grapesjs-mjml": "^1.0.5",
+    "grapesjs-preset-newsletter": "^1.0.2"
   }
 }
