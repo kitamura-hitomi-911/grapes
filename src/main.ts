@@ -8,10 +8,6 @@ import ja from './ja.js';
 import mjmlJa from './mjml-ja.js'
 import './style.css'
 
-// import typescriptLogo from './typescript.svg'
-// import viteLogo from '/vite.svg'
-// import { setupCounter } from './counter.ts'
-
 const isMjml = false
 
 const cmnInitObj = {
@@ -49,15 +45,13 @@ const initObjForNewsletter={
   plugins:[grapesJsNewsletter], 
   pluginsOpts: {
     [grapesJsNewsletter as any]: {
-      useCustomTheme:false,
-      i18n: { ja: mjmlJa }
+      // i18n がきかない
     },
   },
   components: `<div><h1>よろしく</h1></div>`,
 style: `'.txt-red{color: red}'`,
 } 
 
-console.log(grapesJsMjml)
 const editor = grapesjs.init({
   ...cmnInitObj,
   ...(isMjml? initObjForMjml:initObjForNewsletter)

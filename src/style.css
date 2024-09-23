@@ -11,51 +11,53 @@ html {
 #gjs {
   border: 3px solid #ccc;
   box-sizing: border-box;
+
+  /* Primary color for the background */
+  .gjs-one-bg {
+    background-color: #fff;/* #78366a */
+  }
+
+  /* Secondary color for the text color */
+  .gjs-two-color {
+    color: #333333;
+    /* color: rgba(255, 255, 255, 0.7); */
+  }
+
+  /* Tertiary color for the background */
+  .gjs-three-bg {
+    background-color: #f0f0f0;
+    /* background-color: #ec5896; */
+    color: white;
+  }
+
+  /* Quaternary color for the text color */
+  .gjs-four-color,
+  .gjs-four-color-h:hover {
+    color: #6396dd;/* #ec5896 */
+  }
+
+  /* パネルとサイドバー > パネル全体のスタイルに使用 */
+  .gjs-pn-panel{
+    background-color: #efefef;
+  }
+
+  /* サイドバーの見出し部分の余白を調整 */
+  .gjs-category-title,
+  .gjs-layer-title,
+  .gjs-block-category,
+  .gjs-title, 
+  .gjs-sm-sector-title, 
+  .gjs-trait-category .gjs-title{
+    padding:9px 10px;
+  }
+
+  /* Import MJML のボタン… */
+  .gjs-btn-prim{
+    background-color: var(--gjs-main-dark-color);
+  }
 }
 
-/* Primary color for the background */
-.gjs-one-bg {
-  background-color: #fff;/* #78366a */
-}
 
-/* Secondary color for the text color */
-.gjs-two-color {
-  color: #333333;
-  /* color: rgba(255, 255, 255, 0.7); */
-}
-
-/* Tertiary color for the background */
-.gjs-three-bg {
-  background-color: #f0f0f0;
-  /* background-color: #ec5896; */
-  color: white;
-}
-
-/* Quaternary color for the text color */
-.gjs-four-color,
-.gjs-four-color-h:hover {
-  color: #6396dd;/* #ec5896 */
-}
-
-/* パネルとサイドバー > パネル全体のスタイルに使用 */
-.gjs-pn-panel{
-   background-color: #efefef 
-}
-
-/* サイドバーの見出し部分の余白を調整 */
-.gjs-category-title,
-.gjs-layer-title,
-.gjs-block-category,
-.gjs-title, 
-.gjs-sm-sector-title, 
-.gjs-trait-category .gjs-title{
-  padding:9px 10px;
-}
-
-/* Import MJML のボタン… */
-.gjs-btn-prim{
-  background-color: var(--gjs-main-dark-color);
-}
 /* 
 
 メインエディタ領域
