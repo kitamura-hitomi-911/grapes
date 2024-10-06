@@ -23,6 +23,8 @@ export const grapesjsPluginCkeditor5: Plugin<Ckeditor5Options> = (editor, opts =
           rte.destroy();
         }
 
+        console.log(opts)
+
         const option:EditorConfig = {
           language: 'ja',
           plugins: [ Essentials, Bold, Code, AutoLink, Link, Italic, Underline, Strikethrough, Table, TableToolbar, TableColumnResize, List, Font, Subscript, Superscript, Alignment, RemoveFormat, Paragraph ],
@@ -37,9 +39,7 @@ export const grapesjsPluginCkeditor5: Plugin<Ckeditor5Options> = (editor, opts =
           },
           translations: [
             coreTranslations,
-          ],
-          enterMode: 'BR',  // Enterキーで<br>を挿入
-          shiftEnterMode: 'BR'  // Shift + Enterで<br>を挿入
+          ]
         }
         // console.log('★',editor, opts,rte, getDataFromElement)
 
