@@ -2,13 +2,14 @@ import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs from 'grapesjs'
 import grapesJsMjml from 'grapesjs-mjml'
 import grapesJsNewsletter from 'grapesjs-preset-newsletter';
+import {grapesjsPluginCkeditor5} from './grapesjsPluginCkeditor5'
 // @ts-ignore
 import ja from './ja.js';
 // @ts-ignore
 import mjmlJa from './mjml-ja.js'
 import './style.css'
 
-const isMjml = false
+const isMjml = true
 
 const cmnInitObj = {
   container : '#gjs',
@@ -21,12 +22,15 @@ const cmnInitObj = {
   storageManager: false,
 }
 const initObjForMjml={
-  plugins:[grapesJsMjml], 
+  plugins:[grapesJsMjml, grapesjsPluginCkeditor5], 
   pluginsOpts: {
     [grapesJsMjml as any]: {
       useCustomTheme:false,
       i18n: { ja: mjmlJa }
     },
+    [grapesjsPluginCkeditor5 as any]:{
+      inline: ['span','a','button','h1','h2','h3','h4','h5','label'],
+    }
   },
   components: `<mjml>
   <mj-body>
@@ -34,6 +38,7 @@ const initObjForMjml={
     <mj-section>
       <mj-column>
         <mj-text>My Company</mj-text>
+        <mj-text>My Company2</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
@@ -42,10 +47,27 @@ style: `'.txt-red{color: red}'`,
 } 
 
 const initObjForNewsletter={
+  canvas: {
+    styles: ['./newsletter-style.css'],  // 外部CSSファイルのパス
+  },
+  /**
+   * fromElement: true, で、対象要素内のスタイルをいかすこともできる
+   */
   plugins:[grapesJsNewsletter], 
   pluginsOpts: {
     [grapesJsNewsletter as any]: {
       // i18n がきかない
+      modalLabelImport: 'あああPaste all your code here below and click import',
+      modalLabelExport: 'いいいCopy the code and use it wherever you want',
+      importPlaceholder: '<table class="table"><tr><td class="cell">うぇいHello world!</td></tr></table>',
+      cellStyle: {
+        'font-size': '12px',
+        'font-weight': 300,
+        'vertical-align': 'top',
+        color: 'rgb(111, 119, 125)',
+        margin: 0,
+        padding: 0,
+      }
     },
   },
   components: `<div><h1>よろしく</h1></div>`,
@@ -56,5 +78,6 @@ const editor = grapesjs.init({
   ...cmnInitObj,
   ...(isMjml? initObjForMjml:initObjForNewsletter)
 });
+
 console.log(editor)
 
