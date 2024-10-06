@@ -46,7 +46,6 @@ const initObjForMjml={
           { name: 'insert', items: ['Image', 'Table', 'HorizontalRule'] },
           '/',
           { name: 'styles', items: ['Styles', 'Format'] },
-
           { name: 'custom', items: ['CustomDropdown'] }
         ]
       },
@@ -115,7 +114,14 @@ editor.on('component:selected', (component) => {
           editor.ui.addRichCombo('CustomDropdown', {
             label: 'Custom Dropdown',
             title: 'Choose an option',
-            toolbar: 'insert',
+            /* toolbar: 'insert', */
+            className: 'cke_combo__customdropdown',  // CKEditorの標準スタイルクラスを使用
+            panel: {
+              css: [CKEDITOR.skin.getPath('editor')], 
+              multiSelect: false,
+              className: 'cke_panel_list',
+              attributes: { 'aria-label': 'Custom Dropdown' }
+            },
             init: function () {
               this.startGroup('Custom Options');
               this.add('option1', 'Option 1', 'Option 1');
