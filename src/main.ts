@@ -3,7 +3,8 @@ import grapesjs from 'grapesjs'
 import grapesJsMjml from 'grapesjs-mjml'
 import grapesJsNewsletter from 'grapesjs-preset-newsletter';
 // import {grapesjsPluginCkeditor5} from './grapesjsPluginCkeditor5'
-import gjsPluginCkeditor from 'grapesjs-plugin-ckeditor'
+// import gjsPluginCkeditor from 'grapesjs-plugin-ckeditor'
+import grapesjsPluginTiptap from './grapesjsPluginTiptap'
 // @ts-ignore
 import ja from './ja.js';
 // @ts-ignore
@@ -27,28 +28,13 @@ const cmnInitObj = {
   storageManager: false,
 }
 const initObjForMjml={
-  plugins:[grapesJsMjml, gjsPluginCkeditor], 
+  plugins:[grapesJsMjml, grapesjsPluginTiptap], 
   pluginsOpts: {
     [grapesJsMjml as any]: {
       useCustomTheme:false,
       i18n: { ja: mjmlJa }
     },
-    [gjsPluginCkeditor as any]:{
-      options: { 
-        versionCheck: false,
-        extraPlugins: 'customDropdown',  // カスタムプラグインを指定
-        toolbar: [
-          { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo'] },
-          '/',
-          { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat'] },
-          { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
-          { name: 'links', items: ['Link', 'Unlink'] },
-          { name: 'insert', items: ['Image', 'Table', 'HorizontalRule'] },
-          '/',
-          { name: 'styles', items: ['Styles', 'Format'] },
-          { name: 'custom', items: ['CustomDropdown'] }
-        ]
-      },
+    [grapesjsPluginTiptap as any]:{
     }
   },
   components: `<mjml>
@@ -96,52 +82,6 @@ style: `'.txt-red{color: red}'`,
 const editor = grapesjs.init({
   ...cmnInitObj,
   ...(isMjml? initObjForMjml:initObjForNewsletter)
-});
-
-editor.on('component:selected', (component) => {
-  console.log(component)
-  console.log('CKEDITOR' in window)
-
-  // @ts-ignore
-
-  editor.on('rte:enable', (component) => {
-    const rte = editor.RichTextEditor.customRte;
-    const hasRegistered = CKEDITOR.plugins.registered['customDropdown'] as boolean
-    if (rte && window.CKEDITOR && !hasRegistered) {
-      // CKEditorがロードされた後、カスタムプラグインを追加
-      CKEDITOR.plugins.add('customDropdown', {
-        init: function (editor: any) {
-          editor.ui.addRichCombo('CustomDropdown', {
-            label: 'Custom Dropdown',
-            title: 'Choose an option',
-            /* toolbar: 'insert', */
-            className: 'cke_combo__customdropdown',  // CKEditorの標準スタイルクラスを使用
-            panel: {
-              css: [CKEDITOR.skin.getPath('editor')], 
-              multiSelect: false,
-              className: 'cke_panel_list',
-              attributes: { 'aria-label': 'Custom Dropdown' }
-            },
-            init: function () {
-              this.startGroup('Custom Options');
-              this.add('option1', 'Option 1', 'Option 1');
-              this.add('option2', 'Option 2', 'Option 2');
-              this.add('option3', 'Option 3', 'Option 3');
-            },
-            onClick: function (value: string) {
-              editor.insertHtml('You selected: ' + value);
-            }
-          });
-        }
-      });
-  
-      // CKEditorが完全に初期化されたことを確認
-      /* 
-      rte.instance.on('instanceReady', () => {
-        console.log('CKEditor with custom plugin is ready');
-      }); */
-    }
-  });
 });
 
 console.log(editor)
