@@ -1,14 +1,15 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement/* , property */ } from 'lit/decorators.js';
-import 'remixicon/fonts/remixicon.css'
+import mainStyles from './TiptapEditor.css?inline'
+import remixicon from 'remixicon/fonts/remixicon.css?inline'
 
 @customElement('tiptap-editor')
-export class TiptapEditor extends LitElement {
-    createRenderRoot() {
-        return this; // shadow DOMではなくlight DOMを使用する
-      }
+export class TiptapEditor extends LitElement {      
 
-      
+  createRenderRoot() {
+    return this; // Light DOMにする
+  }
+
   onBtnClick= (e:Event) => {
     e.preventDefault()
     console.log(e)
@@ -26,50 +27,33 @@ export class TiptapEditor extends LitElement {
   }
 
   render() {
-    return html`<div class="wrapper">
-        <button data-action="bold" @click="${this.onBtnClick}"><i class="ri-bold"></i></button>
-        <button data-action="italic" @click="${this.onBtnClick}"<i class="ri-italic"></i></button>
-        <button data-action="underline" @click="${this.onBtnClick}"><i class="ri-underline"></i></button>
-        <button data-action="h1" @click="${this.onBtnClick}">H1</button>
-        <button data-action="h2" @click="${this.onBtnClick}">H2</button>
-        <button data-action="h3" @click="${this.onBtnClick}">H3</button>
+    return html`<style>${mainStyles}</style><style>${remixicon}</style>
+    <div class="wrapper">
+        <button data-action="textAlign" data-param="left" @click="${this.onBtnClick}" class="is-icon"><i class="ri-align-left"></i></button>
+        <button data-action="textAlign" data-param="center" @click="${this.onBtnClick}" class="is-icon"><i class="ri-align-center"></i></button>
+        <button data-action="textAlign" data-param="right" @click="${this.onBtnClick}" class="is-icon"><i class="ri-align-right"></i></button>
+        <span class="separator"></span>
+        <button data-action="bold" @click="${this.onBtnClick}" class="is-icon"><i class="ri-bold"></i></button>
+        <button data-action="italic" @click="${this.onBtnClick}" class="is-icon"><i class="ri-italic"></i></button>
+        <button data-action="underline" @click="${this.onBtnClick}" class="is-icon"><i class="ri-underline"></i></button>
+        <span class="separator"></span>
+        <button data-action="bulletList" @click="${this.onBtnClick}" class="is-icon"><i class="ri-list-unordered"></i></button>
+        <button data-action="orderList" @click="${this.onBtnClick}" class="is-icon"><i class="ri-list-ordered"></i></button>
+        <span class="separator"></span>
+        <button data-action="h1" @click="${this.onBtnClick}" class="is-icon">H1</button>
+        <button data-action="h2" @click="${this.onBtnClick}" class="is-icon">H2</button>
+        <button data-action="h3" @click="${this.onBtnClick}" class="is-icon">H3</button>
         <button data-action="color" @click="${this.onBtnClick}">赤</button>
         <button data-action="color" @click="${this.onBtnClick}">青</button>
         <button data-action="color" @click="${this.onBtnClick}">黄色</button>
         <button data-action="color" @click="${this.onBtnClick}">黒</button>
         <button data-action="color" @click="${this.onBtnClick}">差し込みタグ</button>
-        <button data-action="link" @click="${this.onBtnClick}">Link</button>
-        <button data-action="bulletList" @click="${this.onBtnClick}">UL</button>
-        <button data-action="orderList" @click="${this.onBtnClick}">OL</button>
-        <button data-action="textAlign" @click="${this.onBtnClick}">Left</button>
+        <button data-action="link" @click="${this.onBtnClick}" class="is-icon">Link</button>
+
+        
         </div>
     `;
   }
-
-  static styles = css`
-    .wrapper{
-    display:flex;
-    align-items:center
-    flex-wrap:wrap:
-    }
-     button {
-      border-radius: 8px;
-      border: 1px solid transparent;
-      padding: 0.6em 1.2em;
-      font-size: 1em;
-      font-weight: 500;
-      font-family: inherit;
-      cursor: pointer;
-      transition: border-color 0.25s;
-    }
-    button:hover {
-      border-color: #646cff;
-    }
-    button:focus,
-    button:focus-visible {
-      outline: 4px auto -webkit-focus-ring-color;
-    }
-  `;
 }
 
 declare global {
