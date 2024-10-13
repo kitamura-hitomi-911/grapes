@@ -2,6 +2,7 @@ import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs from 'grapesjs'
 import grapesJsMjml from 'grapesjs-mjml'
 import grapesJsNewsletter from 'grapesjs-preset-newsletter';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 // import {grapesjsPluginCkeditor5} from './grapesjsPluginCkeditor5'
 // import gjsPluginCkeditor from 'grapesjs-plugin-ckeditor'
 import grapesjsPluginTiptap from './grapesjsPluginTiptap'
@@ -19,6 +20,7 @@ const isMjml = true
 
 const cmnInitObj = {
   container : '#gjs',
+  height:'100vh', // これがないと位置計算が変だよ
   i18n: {
     // locale: 'en', // default locale
     // detectLocale: true, // by default, the editor will detect the language
@@ -26,6 +28,7 @@ const cmnInitObj = {
     messages: { ja },
   },
   storageManager: false,
+  cssIcons:'' //cdn 置きのアイコンは読み込ませないよ
 }
 const initObjForMjml={
   plugins:[grapesJsMjml, grapesjsPluginTiptap], 
@@ -84,5 +87,15 @@ const editor = grapesjs.init({
   ...(isMjml? initObjForMjml:initObjForNewsletter)
 });
 
+
+editor.on('load', () => {
+  // パネルの「表示/非表示」ボタン（sw-visibility）を取得
+  const visibilityBtn = editor.Panels.getButton('options', 'sw-visibility');
+  if (visibilityBtn) {
+    const baseClassName = visibilityBtn.className
+    const newClassName = baseClassName.replace('fa-square-o', 'far fa-square');
+    visibilityBtn.set({'className':newClassName})
+  }
+});
 console.log(editor)
 

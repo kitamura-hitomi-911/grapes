@@ -16,6 +16,7 @@ import OrderedList from '@tiptap/extension-ordered-list'
 import TextAlign from '@tiptap/extension-text-align'
 import { HardBreak } from '@tiptap/extension-hard-break'
 import { Editor as GrapesJSEditor } from 'grapesjs'
+import './tiptapEditor'
 
 const CustomHeading = Heading.extend({
   addAttributes() {
@@ -144,6 +145,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
         onCreate: ({ editor }) => {
           el.style.display = 'none'
           editor.view.dom.classList.remove('is-hide')
+          grapesjsEditor.refresh() // これ必要だったよ
         },
         onDestroy: () => {
           el.style.display = 'block'
@@ -166,24 +168,25 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
         // Tiptapのツールバーを作成
         tiptapToolbar = document.createElement('div')
         tiptapToolbar.className = 'tiptap-toolbar'
-        tiptapToolbar.innerHTML = `
+        tiptapToolbar.innerHTML = '<tiptap-editor></tiptap-editor>';
+        /* tiptapToolbar.innerHTML = `
           <button data-action="bold">Bold</button>
           <button data-action="italic">Italic</button>
           <button data-action="underline">Underline</button>
           <button data-action="h1">H1</button>
           <button data-action="h2">H2</button>
           <button data-action="color">赤</button>
+          <button data-action="color">ながい文相</button>
+          <button data-action="color">ながい文相ながい文相ながい文相ながい文相ながい文相</button>
           <button data-action="link">Link</button>
           <button data-action="bulletList">UL</button>
           <button data-action="orderList">OL</button>
-          <button data-action="textAlign">Left</button>
-        `
+          <button data-action="textAlign">Left</button> 
+        ` */
 
         // ツールバーのイベントリスナーを設定
-        tiptapToolbar.addEventListener('click', (e) => {
-          e.preventDefault()
-          const target = e.target as HTMLElement
-          const action = target.dataset.action
+        tiptapToolbar.addEventListener('on-click-tiptap-editor', (e: CustomEvent<{ action: string }>) => {
+          const {action} = e.detail
           if (action && tiptapEditor) {
             switch (action) {
               case 'bold':
