@@ -1,6 +1,7 @@
 import { LitElement, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, state, queryAll } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { computePosition, flip, shift } from "@floating-ui/dom";
 import mainStyles from "./TiptapEditor.css?inline";
 import remixicon from "remixicon/fonts/remixicon.css?inline";
 
@@ -105,7 +106,7 @@ export class TiptapEditor extends LitElement {
     },
     "separator",
     {
-      name: "heading",
+      name: "open-heading",
       label: "見出し",
       ui: "select",
       list: [
@@ -133,12 +134,41 @@ export class TiptapEditor extends LitElement {
     },
   ];
 
+  @queryAll(".options")
+  optionsElms!: NodeListOf<HTMLDivElement>;
+
+  toggleOptions = (btnElm: HTMLButtonElement) => {
+    const optionsElm =
+      btnElm.parentElement?.querySelector<HTMLDivElement>(".options");
+    if (!optionsElm) {
+      return;
+    }
+    if (optionsElm.classList.contains("is-show")) {
+      optionsElm.classList.remove("is-show");
+      return;
+    }
+    optionsElm.classList.add("is-show");
+    computePosition(btnElm, optionsElm, {
+      placement: "bottom-start",
+      middleware: [flip(), shift()],
+    }).then(({ x, y }) => {
+      console.log(x, y);
+      Object.assign(optionsElm.style, {
+        left: `${x}px`,
+        top: `${y}px`,
+      });
+    });
+  };
+
   onBtnClick = (e: Event) => {
     e.preventDefault();
     console.log(e);
     const tgtElm = e.currentTarget as HTMLButtonElement;
     const action = tgtElm.dataset.action || "";
-    if (action) {
+    console.log(action);
+    if (action.startsWith("open")) {
+      this.toggleOptions(tgtElm);
+    } else if (action) {
       const event = new CustomEvent("on-click-tiptap-editor", {
         detail: { action },
         bubbles: true,
@@ -159,7 +189,8 @@ export class TiptapEditor extends LitElement {
         ${this.actionList.map((action) =>
           action === "separator"
             ? html`<span class="separator"></span>`
-            : html`<button
+            : html`<div class="btn_wrapper">
+                <button
                   data-action="${action.name}"
                   data-param="${action.param}"
                   @click="${this.onBtnClick}"
@@ -173,7 +204,7 @@ export class TiptapEditor extends LitElement {
                     ? html`<i class="${action.icon}"></i>`
                     : html`<span class="label">${action.label}</span>`}
                   ${action.ui === "select"
-                    ? html`<span class="dropdown"
+                    ? html`<span class="dropdown_icon"
                         ><i class="ri-arrow-down-s-line"></i
                       ></span>`
                     : ""}
@@ -193,8 +224,9 @@ export class TiptapEditor extends LitElement {
                           <span class="label">${option.label}</span>
                         </button>`
                       )}
-                    </div>`
-                  : ""} `
+                    </div></div>`
+                  : ""}
+              </div> `
         )}
       </div> `;
   }

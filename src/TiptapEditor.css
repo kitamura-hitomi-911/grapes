@@ -10,6 +10,9 @@
   height: 24px;
   background: #efefef;
 }
+.btn_wrapper {
+  position: relative;
+}
 button {
   height: 30px;
   display: flex;
@@ -44,7 +47,7 @@ button {
     align-items: center;
   }
 
-  .dropdown {
+  .dropdown_icon {
     width: 20px;
     display: flex;
     align-items: center;
@@ -62,6 +65,13 @@ button:focus-visible {
 }
 
 .options {
+  width: max-content;
   display: none;
   position: absolute;
+  top: 0;
+  left: 0;
+
+  &.is-show {
+    display: block;
+  }
 }
