@@ -6,6 +6,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 // import {grapesjsPluginCkeditor5} from './grapesjsPluginCkeditor5'
 // import gjsPluginCkeditor from 'grapesjs-plugin-ckeditor'
 import grapesjsPluginTiptap from './grapesjsPluginTiptap'
+// import {tinymcePlugin} from './tinymcePlugin'
 // @ts-ignore
 import ja from './ja.js';
 // @ts-ignore
