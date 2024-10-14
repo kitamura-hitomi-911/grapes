@@ -6,26 +6,68 @@ import { computePosition, flip, shift } from "@floating-ui/dom";
 import mainStyles from "./TiptapEditor.css?inline";
 import remixicon from "remixicon/fonts/remixicon.css?inline";
 
-type ActionName =
-  | "textAlign"
-  | "bold"
-  | "italic"
-  | "underline"
-  | "textStyle"
-  | "bulletList"
-  | "orderList"
-  | "link"
-  | "unlink"
-  | "heading";
-
-type OpenActioinName = "open-heading" | "open-mergetag" | "open-color";
-
-type TiptapBtnProp = {
-  name: ActionName | OpenActioinName;
+type SimpleBtnProp = {
+  name: "bold" | "italic" | "underline" | "bulletList" | "orderList" | "unlink";
   attr?: Record<string, string>;
   label: string;
   icon?: string;
 };
+type LinkBtnProp = {
+  name: "link";
+  attr: { href: string; target: string };
+  label: string;
+  icon?: string;
+};
+type TextAlignBtnProp = {
+  name: "textAlign";
+  attr: { alignment: "left" | "center" | "right" };
+  label: string;
+  icon?: string;
+};
+type HeadingBtnProp = {
+  name: "heading";
+  attr: { level: "1" | "2" | "3" | "4" | "5" | "6" };
+  label: string;
+  icon?: string;
+};
+type TextStyleBtnProp = {
+  name: "textStyle";
+  attr: { color?: string };
+  label: string;
+  icon?: string;
+};
+
+type BtnProp = (SimpleBtnProp | LinkBtnProp | TextAlignBtnProp) & {
+  ui: "btn_icon" | "btn_label";
+};
+
+type OpenBtnProp =
+  | {
+      name: "open-color";
+      label: string;
+      icon?: string;
+      ui: "select_color";
+      list: TextStyleBtnProp[];
+    }
+  | {
+      name: "open-link";
+      label: string;
+      icon?: string;
+      ui: "btn_icon";
+    }
+  | {
+      name: "open-heading";
+      label: string;
+      icon?: string;
+      ui: "select";
+      list: HeadingBtnProp[];
+    }
+  | {
+      name: "open-mergetag";
+      label: string;
+      icon?: string;
+      ui: "btn_label";
+    };
 
 @customElement("tiptap-editor")
 export class TiptapEditor extends LitElement {
@@ -35,7 +77,12 @@ export class TiptapEditor extends LitElement {
 
   @property({ type: Object })
   state: {
-    [key in ActionName]: {
+    [key in
+      | SimpleBtnProp["name"]
+      | LinkBtnProp["name"]
+      | TextAlignBtnProp["name"]
+      | HeadingBtnProp["name"]
+      | TextStyleBtnProp["name"]]: {
       isActive: boolean;
     };
   } = {
@@ -72,20 +119,7 @@ export class TiptapEditor extends LitElement {
   };
 
   @state()
-  actionList: (
-    | (TiptapBtnProp & {
-        ui: "btn_icon" | "btn_label";
-      })
-    | (TiptapBtnProp & {
-        ui: "select";
-        list: TiptapBtnProp[];
-      })
-    | (TiptapBtnProp & {
-        ui: "select_color";
-        list: TiptapBtnProp[];
-      })
-    | "separator"
-  )[] = [
+  actionList: (BtnProp | OpenBtnProp | "separator")[] = [
     {
       name: "textAlign",
       attr: { alignment: "left" },
@@ -250,7 +284,7 @@ export class TiptapEditor extends LitElement {
     },
     "separator",
     {
-      name: "link",
+      name: "open-link",
       label: "リンク",
       icon: "ri-link",
       ui: "btn_icon",
@@ -265,6 +299,50 @@ export class TiptapEditor extends LitElement {
     {
       name: "open-heading",
       label: "見出し",
+      ui: "select",
+      list: [
+        {
+          name: "heading",
+          attr: { level: "1" },
+          label: "Heading 1",
+        },
+        {
+          name: "heading",
+          attr: { level: "2" },
+          label: "Heading 2",
+        },
+        {
+          name: "heading",
+          attr: { level: "3" },
+          label: "Heading 3",
+        },
+      ],
+    },
+    {
+      name: "open-heading",
+      label: "フォント",
+      ui: "select",
+      list: [
+        {
+          name: "heading",
+          attr: { level: "1" },
+          label: "Heading 1",
+        },
+        {
+          name: "heading",
+          attr: { level: "2" },
+          label: "Heading 2",
+        },
+        {
+          name: "heading",
+          attr: { level: "3" },
+          label: "Heading 3",
+        },
+      ],
+    },
+    {
+      name: "open-heading",
+      label: "フォントサイズ",
       ui: "select",
       list: [
         {
@@ -352,7 +430,9 @@ export class TiptapEditor extends LitElement {
             : html`<div class="btn_wrapper">
                 <button
                   data-action="${action.name}"
-                  data-attr="${action.attr ? JSON.stringify(action.attr) : ""}"
+                  data-attr="${action.name === "textAlign"
+                    ? JSON.stringify(action.attr)
+                    : ""}"
                   @click="${this.onBtnClick}"
                   class="${classMap({
                     "is-icon": action.ui === "btn_icon",
@@ -361,7 +441,8 @@ export class TiptapEditor extends LitElement {
                     "is-active":
                       action.name !== "open-heading" &&
                       action.name !== "open-mergetag" &&
-                      action.name !== "open-color"
+                      action.name !== "open-color" &&
+                      action.name !== "open-link"
                         ? this.state[action.name].isActive
                         : false,
                   })}"
