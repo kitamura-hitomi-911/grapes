@@ -39,6 +39,11 @@ button {
     position: relative;
   }
 
+  &.is-option {
+    display: flex;
+    align-items: center;
+  }
+
   .dropdown {
     width: 20px;
     display: flex;
@@ -51,6 +56,12 @@ button:hover {
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 1px auto #00f;
+  border-width: 1px;
   border-color: #646cff;
+}
+
+.options {
+  display: none;
+  position: absolute;
 }

@@ -20,7 +20,20 @@ export class TiptapEditor extends LitElement {
         param?: string;
         label: string;
         icon?: string;
-        ui: "btn_icon" | "btn_label" | "select";
+        ui: "btn_icon" | "btn_label";
+      }
+    | {
+        name: string;
+        param?: string;
+        label: string;
+        icon?: string;
+        ui: "select";
+        list: {
+          name: string;
+          param?: string;
+          label: string;
+          icon?: string;
+        }[];
       }
     | "separator"
   )[] = [
@@ -81,13 +94,37 @@ export class TiptapEditor extends LitElement {
     {
       name: "link",
       label: "リンク",
-      icon: "ri-list-ordered",
+      icon: "ri-link",
       ui: "btn_icon",
     },
     {
-      name: "h1",
+      name: "unlink",
+      label: "リンク解除",
+      icon: "ri-link-unlink",
+      ui: "btn_icon",
+    },
+    "separator",
+    {
+      name: "heading",
       label: "見出し",
       ui: "select",
+      list: [
+        {
+          name: "h1",
+          label: "H1",
+          icon: "ri-h-1",
+        },
+        {
+          name: "h2",
+          label: "H2",
+          icon: "ri-h-2",
+        },
+        {
+          name: "h3",
+          label: "H3",
+          icon: "ri-h-3",
+        },
+      ],
     },
     {
       name: "mergetag",
@@ -123,24 +160,41 @@ export class TiptapEditor extends LitElement {
           action === "separator"
             ? html`<span class="separator"></span>`
             : html`<button
-                data-action="${action.name}"
-                data-param="${action.param}"
-                @click="${this.onBtnClick}"
-                class="${classMap({
-                  "is-icon": action.ui === "btn_icon",
-                  "is-label": action.ui === "btn_label",
-                  "is-select": action.ui === "select",
-                })}"
-              >
-                ${action.icon
-                  ? html`<i class="${action.icon}"></i>`
-                  : html`<span class="label">${action.label}</span>`}
+                  data-action="${action.name}"
+                  data-param="${action.param}"
+                  @click="${this.onBtnClick}"
+                  class="${classMap({
+                    "is-icon": action.ui === "btn_icon",
+                    "is-label": action.ui === "btn_label",
+                    "is-select": action.ui === "select",
+                  })}"
+                >
+                  ${action.icon
+                    ? html`<i class="${action.icon}"></i>`
+                    : html`<span class="label">${action.label}</span>`}
+                  ${action.ui === "select"
+                    ? html`<span class="dropdown"
+                        ><i class="ri-arrow-down-s-line"></i
+                      ></span>`
+                    : ""}
+                </button>
                 ${action.ui === "select"
-                  ? html`<span class="dropdown"
-                      ><i class="ri-arrow-down-s-line"></i
-                    ></span>`
-                  : ""}
-              </button>`
+                  ? html`<div class="options">
+                      ${action.list.map(
+                        (option) => html`<button
+                          data-action="${option.name}"
+                          data-param="${option.param}"
+                          @click="${this.onBtnClick}"
+                          class="is-option"
+                        >
+                          ${option.icon
+                            ? html`<i class="${option.icon}"></i>`
+                            : ""}
+                          <span class="label">${option.label}</span>
+                        </button>`
+                      )}
+                    </div>`
+                  : ""} `
         )}
       </div> `;
   }
