@@ -1,22 +1,22 @@
-import { Editor, Node /* , mergeAttributes */ } from '@tiptap/core'
-import { Document } from '@tiptap/extension-document'
-import { Paragraph } from '@tiptap/extension-paragraph'
-import { Bold } from '@tiptap/extension-bold'
-import { Italic } from '@tiptap/extension-italic'
-import { Strike } from '@tiptap/extension-strike'
-import Heading from '@tiptap/extension-heading'
-import Underline from '@tiptap/extension-underline'
-import Text from '@tiptap/extension-text'
-import TextStyle from '@tiptap/extension-text-style'
-import { Color } from '@tiptap/extension-color'
-import Link from '@tiptap/extension-link'
-import ListItem from '@tiptap/extension-list-item'
-import BulletList from '@tiptap/extension-bullet-list'
-import OrderedList from '@tiptap/extension-ordered-list'
-import TextAlign from '@tiptap/extension-text-align'
-import { HardBreak } from '@tiptap/extension-hard-break'
-import { Editor as GrapesJSEditor } from 'grapesjs'
-import './tiptapEditor'
+import { Editor, Node /* , mergeAttributes */ } from "@tiptap/core";
+import { Document } from "@tiptap/extension-document";
+import { Paragraph } from "@tiptap/extension-paragraph";
+import { Bold } from "@tiptap/extension-bold";
+import { Italic } from "@tiptap/extension-italic";
+import { Strike } from "@tiptap/extension-strike";
+import Heading from "@tiptap/extension-heading";
+import Underline from "@tiptap/extension-underline";
+import Text from "@tiptap/extension-text";
+import TextStyle from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import Link from "@tiptap/extension-link";
+import ListItem from "@tiptap/extension-list-item";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import TextAlign from "@tiptap/extension-text-align";
+import { HardBreak } from "@tiptap/extension-hard-break";
+import { Editor as GrapesJSEditor } from "grapesjs";
+import "./tiptapEditor";
 
 const CustomHeading = Heading.extend({
   addAttributes() {
@@ -26,7 +26,7 @@ const CustomHeading = Heading.extend({
         default: null,
         // Customize the HTML parsing (for example, to load the initial content)
         parseHTML: (element) => {
-          return element.getAttribute('style')
+          return element.getAttribute("style");
         },
         // … and customize the HTML rendering.
         renderHTML: (attributes) => {
@@ -34,83 +34,83 @@ const CustomHeading = Heading.extend({
             ? {
                 style: attributes.style,
               }
-            : {}
+            : {};
         },
       },
       isInitialLoad: {
         default: false,
         parseHTML: () => true, // 初回読み込み時は true
         renderHTML: () => {
-          return {}
+          return {};
         },
       },
-    }
+    };
   },
   renderHTML({ node, HTMLAttributes }) {
-    const hasLevel = this.options.levels.includes(node.attrs.level)
-    const level = hasLevel ? node.attrs.level : this.options.levels[0]
+    const hasLevel = this.options.levels.includes(node.attrs.level);
+    const level = hasLevel ? node.attrs.level : this.options.levels[0];
 
     // 初回読み込み時には受け取ったスタイルをそのまま使用
     if (node.attrs.isInitialLoad) {
-      return [`h${level}`, HTMLAttributes, 0]
+      return [`h${level}`, HTMLAttributes, 0];
     }
 
     // Tiptap内で変更が加わった場合に適用するフォントサイズ
     const tiptapFontSize =
-      level === 1 ? 'font-size: 145%;' : level === 2 ? 'font-size: 130%;' : ''
+      level === 1 ? "font-size: 145%;" : level === 2 ? "font-size: 130%;" : "";
 
     // 現在のスタイルに font-size があるかチェックし、削除
-    const existingStyle = (HTMLAttributes.style || '')
-      .replace(/font-size:\s*\S+;?/g, '')
-      .trim()
+    const existingStyle = (HTMLAttributes.style || "")
+      .replace(/font-size:\s*\S+;?/g, "")
+      .trim();
 
     // Tiptap の font-size をマージ
-    const mergedStyle = `${existingStyle} ${tiptapFontSize}`.trim()
+    const mergedStyle = `${existingStyle} ${tiptapFontSize}`.trim();
 
     return [
       `h${level}`, // レベルに応じたタグ名
       { ...HTMLAttributes, style: mergedStyle }, // 属性にスタイルをマージ
       0,
-    ]
+    ];
   },
-})
+});
 
 const CustomDiv = Node.create({
-  name: 'customDiv',
+  name: "customDiv",
 
-  group: 'block', // div をブロック要素として扱う
-  content: 'inline*', // div の中にはインライン要素のみ許可する（p タグを含まない）
+  group: "block", // div をブロック要素として扱う
+  content: "inline*", // div の中にはインライン要素のみ許可する（p タグを含まない）
   // content: 'block*',
 
   parseHTML() {
     return [
       {
-        tag: 'div',
+        tag: "div",
       },
-    ]
+    ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['div', HTMLAttributes, 0]
+    return ["div", HTMLAttributes, 0];
   },
-})
+});
 
 // https://github.com/ueberdosis/tiptap/issues/118
 // li の中の p は編集上必要なので消えない
 
 const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
-  let tiptapEditor: Editor | null = null
-  let tiptapToolbar: HTMLDivElement | null
+  let tiptapEditor: Editor | null = null;
+  let tiptapToolbar: HTMLDivElement | null;
 
   grapesjsEditor.setCustomRte({
     enable: (el: HTMLElement, rte: Editor | null) => {
       if (rte && !rte.isDestroyed) {
-        console.log(rte)
-        return rte
+        console.log(rte);
+        return rte;
       }
-      console.log('rteをつくる流れ', el, rte)
+      console.log("rteをつくる流れ", el, rte);
 
-      const tgtComponentStyle = el.getAttribute('style')
+      const tgtComponentStyle = el.getAttribute("style");
 
       tiptapEditor = new Editor({
         element: el.parentElement as HTMLElement,
@@ -128,7 +128,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
           Color,
           Link,
           TextAlign.configure({
-            types: ['heading', 'paragraph', 'customDiv'],
+            types: ["heading", "paragraph", "customDiv"],
           }),
           BulletList,
           OrderedList,
@@ -138,17 +138,17 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
         content: el.innerHTML,
         editorProps: {
           attributes: {
-            class: 'tiptap-editor is-hide',
-            style: tgtComponentStyle || '',
+            class: "tiptap-editor is-hide",
+            style: tgtComponentStyle || "",
           },
         },
         onCreate: ({ editor }) => {
-          el.style.display = 'none'
-          editor.view.dom.classList.remove('is-hide')
-          grapesjsEditor.refresh() // これ必要だったよ
+          el.style.display = "none";
+          editor.view.dom.classList.remove("is-hide");
+          grapesjsEditor.refresh(); // これ必要だったよ
         },
         onDestroy: () => {
-          el.style.display = 'block'
+          el.style.display = "block";
         },
         /* 
         onUpdate: ({ editor }) => {
@@ -162,13 +162,13 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
             // component.set('content', innerHtml)
           }
         }, */
-      })
+      });
 
       if (!tiptapToolbar) {
         // Tiptapのツールバーを作成
-        tiptapToolbar = document.createElement('div')
-        tiptapToolbar.className = 'tiptap-toolbar'
-        tiptapToolbar.innerHTML = '<tiptap-editor></tiptap-editor>';
+        tiptapToolbar = document.createElement("div");
+        tiptapToolbar.className = "tiptap-toolbar";
+        tiptapToolbar.innerHTML = "<tiptap-editor></tiptap-editor>";
         /* tiptapToolbar.innerHTML = `
           <button data-action="bold">Bold</button>
           <button data-action="italic">Italic</button>
@@ -185,69 +185,88 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
         ` */
 
         // ツールバーのイベントリスナーを設定
-        tiptapToolbar.addEventListener('on-click-tiptap-editor', (e: CustomEvent<{ action: string }>) => {
-          const {action} = e.detail
-          if (action && tiptapEditor) {
-            switch (action) {
-              case 'bold':
-                tiptapEditor.chain().focus().toggleBold().run()
-                break
-              case 'italic':
-                tiptapEditor.chain().focus().toggleItalic().run()
-                break
-              case 'underline':
-                tiptapEditor.chain().focus().toggleUnderline().run()
-                break
-              case 'h1':
-                tiptapEditor.chain().focus().toggleHeading({ level: 1 }).run()
-                break
-              case 'h2':
-                tiptapEditor.chain().focus().toggleHeading({ level: 2 }).run()
-                break
-              case 'color':
-                tiptapEditor.chain().focus().setColor('#ff0000').run()
-                break
-              case 'link':
-                tiptapEditor
-                  .chain()
-                  .focus()
-                  .toggleLink({ href: 'https://example.com', target: '_blank' })
-                  .run()
-                break
-              case 'bulletList':
-                tiptapEditor.chain().focus().toggleBulletList().run()
-                break
-              case 'orderList':
-                tiptapEditor.chain().focus().toggleOrderedList().run()
-                break
-              case 'textAlign':
-                tiptapEditor.chain().focus().setTextAlign('right').run()
-                break
+        tiptapToolbar.addEventListener(
+          "on-click-tiptap-editor",
+          (
+            e: CustomEvent<{
+              action: string;
+              attr: Record<string, string> | null;
+            }>
+          ) => {
+            const { action, attr } = e.detail;
+            if (action && tiptapEditor) {
+              switch (action) {
+                case "bold":
+                  tiptapEditor.chain().focus().toggleBold().run();
+                  break;
+                case "italic":
+                  tiptapEditor.chain().focus().toggleItalic().run();
+                  break;
+                case "underline":
+                  tiptapEditor.chain().focus().toggleUnderline().run();
+                  break;
+                case "heading":
+                  const culcLevel = attr?.level || "1";
+                  tiptapEditor
+                    .chain()
+                    .focus()
+                    .toggleHeading({
+                      level: Number(culcLevel) as 1 | 2 | 3 | 4 | 5 | 6,
+                    })
+                    .run();
+                  break;
+                case "color":
+                  tiptapEditor.chain().focus().setColor("#ff0000").run();
+                  break;
+                case "link":
+                  tiptapEditor
+                    .chain()
+                    .focus()
+                    .toggleLink({
+                      href: "https://example.com",
+                      target: "_blank",
+                    })
+                    .run();
+                  break;
+                case "bulletList":
+                  tiptapEditor.chain().focus().toggleBulletList().run();
+                  break;
+                case "orderList":
+                  tiptapEditor.chain().focus().toggleOrderedList().run();
+                  break;
+                case "textAlign":
+                  tiptapEditor
+                    .chain()
+                    .focus()
+                    .setTextAlign(attr?.alignment || "left")
+                    .run();
+                  break;
+              }
             }
           }
-        })
+        );
 
-        const rteToolbar = grapesjsEditor.RichTextEditor.getToolbarEl()
-        rteToolbar.appendChild(tiptapToolbar)
+        const rteToolbar = grapesjsEditor.RichTextEditor.getToolbarEl();
+        rteToolbar.appendChild(tiptapToolbar);
       }
 
       // ツールバーをエディターの前に挿入
       // el.parentNode?.insertBefore(toolbar, el)
 
-      return tiptapEditor
+      return tiptapEditor;
     },
 
     disable: (el: HTMLElement, rte: Editor | null) => {
       if (rte) {
-        console.log('きた？', el, rte)
-        rte.destroy()
+        console.log("きた？", el, rte);
+        rte.destroy();
       }
     },
 
     getContent: (el: HTMLElement, rte: Editor | null) => {
-      return rte ? rte.getHTML() : el.innerHTML
+      return rte ? rte.getHTML() : el.innerHTML;
     },
-  })
-}
+  });
+};
 
-export default tiptapRTEPlugin
+export default tiptapRTEPlugin;

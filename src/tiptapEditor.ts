@@ -5,6 +5,13 @@ import { computePosition, flip, shift } from "@floating-ui/dom";
 import mainStyles from "./TiptapEditor.css?inline";
 import remixicon from "remixicon/fonts/remixicon.css?inline";
 
+type TiptapBtnProp = {
+  name: string;
+  attr?: Record<string, string>;
+  label: string;
+  icon?: string;
+};
+
 @customElement("tiptap-editor")
 export class TiptapEditor extends LitElement {
   createRenderRoot() {
@@ -16,45 +23,32 @@ export class TiptapEditor extends LitElement {
 
   @state()
   actionList: (
-    | {
-        name: string;
-        param?: string;
-        label: string;
-        icon?: string;
+    | (TiptapBtnProp & {
         ui: "btn_icon" | "btn_label";
-      }
-    | {
-        name: string;
-        param?: string;
-        label: string;
-        icon?: string;
+      })
+    | (TiptapBtnProp & {
         ui: "select";
-        list: {
-          name: string;
-          param?: string;
-          label: string;
-          icon?: string;
-        }[];
-      }
+        list: TiptapBtnProp[];
+      })
     | "separator"
   )[] = [
     {
       name: "textAlign",
-      param: "left",
+      attr: { alignment: "left" },
       label: "左揃え",
       icon: "ri-align-left",
       ui: "btn_icon",
     },
     {
       name: "textAlign",
-      param: "center",
+      attr: { alignment: "center" },
       label: "中央揃え",
       icon: "ri-align-center",
       ui: "btn_icon",
     },
     {
       name: "textAlign",
-      param: "right",
+      attr: { alignment: "right" },
       label: "右揃え",
       icon: "ri-align-center",
       ui: "btn_icon",
@@ -111,17 +105,20 @@ export class TiptapEditor extends LitElement {
       ui: "select",
       list: [
         {
-          name: "h1",
+          name: "heading",
+          attr: { level: "1" },
           label: "H1",
           icon: "ri-h-1",
         },
         {
-          name: "h2",
+          name: "heading",
+          attr: { level: "2" },
           label: "H2",
           icon: "ri-h-2",
         },
         {
-          name: "h3",
+          name: "heading",
+          attr: { level: "3" },
           label: "H3",
           icon: "ri-h-3",
         },
@@ -165,12 +162,13 @@ export class TiptapEditor extends LitElement {
     console.log(e);
     const tgtElm = e.currentTarget as HTMLButtonElement;
     const action = tgtElm.dataset.action || "";
+    const attr = tgtElm.dataset.attr || "";
     console.log(action);
     if (action.startsWith("open")) {
       this.toggleOptions(tgtElm);
     } else if (action) {
       const event = new CustomEvent("on-click-tiptap-editor", {
-        detail: { action },
+        detail: { action, attr: attr ? JSON.parse(attr) || null : null },
         bubbles: true,
       });
 
@@ -192,7 +190,7 @@ export class TiptapEditor extends LitElement {
             : html`<div class="btn_wrapper">
                 <button
                   data-action="${action.name}"
-                  data-param="${action.param}"
+                  data-attr="${action.attr ? JSON.stringify(action.attr) : ""}"
                   @click="${this.onBtnClick}"
                   class="${classMap({
                     "is-icon": action.ui === "btn_icon",
@@ -214,7 +212,9 @@ export class TiptapEditor extends LitElement {
                       ${action.list.map(
                         (option) => html`<button
                           data-action="${option.name}"
-                          data-param="${option.param}"
+                          data-attr="${option.attr
+                            ? JSON.stringify(option.attr)
+                            : ""}"
                           @click="${this.onBtnClick}"
                           class="is-option"
                         >
