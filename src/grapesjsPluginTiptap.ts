@@ -101,6 +101,8 @@ const CustomDiv = Node.create({
 const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
   let tiptapEditor: Editor | null = null;
   let tiptapToolbar: HTMLDivElement | null;
+  const tiptapEditorUi: HTMLElementTagNameMap["tiptap-editor"] =
+    document.createElement("tiptap-editor");
 
   grapesjsEditor.setCustomRte({
     enable: (el: HTMLElement, rte: Editor | null) => {
@@ -111,6 +113,41 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
       console.log("rteをつくる流れ", el, rte);
 
       const tgtComponentStyle = el.getAttribute("style");
+
+      const updateIsActive = (editor: Editor) => {
+        tiptapEditorUi.state = {
+          textAlign: {
+            isActive: false,
+          },
+          bold: {
+            isActive: editor?.isActive("bold") || false,
+          },
+          italic: {
+            isActive: editor?.isActive("italic") || false,
+          },
+          underline: {
+            isActive: editor?.isActive("underline") || false,
+          },
+          textStyle: {
+            isActive: false,
+          },
+          bulletList: {
+            isActive: false,
+          },
+          orderList: {
+            isActive: false,
+          },
+          link: {
+            isActive: false,
+          },
+          unlink: {
+            isActive: false,
+          },
+          heading: {
+            isActive: false,
+          },
+        };
+      };
 
       tiptapEditor = new Editor({
         element: el.parentElement as HTMLElement,
@@ -150,6 +187,12 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
         onDestroy: () => {
           el.style.display = "block";
         },
+        onUpdate: ({ editor }) => {
+          updateIsActive(editor);
+        },
+        onSelectionUpdate: ({ editor }) => {
+          updateIsActive(editor);
+        },
         /* 
         onUpdate: ({ editor }) => {
           const innerHtml = editor.getHTML()
@@ -168,7 +211,8 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
         // Tiptapのツールバーを作成
         tiptapToolbar = document.createElement("div");
         tiptapToolbar.className = "tiptap-toolbar";
-        tiptapToolbar.innerHTML = "<tiptap-editor></tiptap-editor>";
+        tiptapToolbar.appendChild(tiptapEditorUi);
+        // tiptapToolbar.innerHTML = "<tiptap-editor></tiptap-editor>";
         /* tiptapToolbar.innerHTML = `
           <button data-action="bold">Bold</button>
           <button data-action="italic">Italic</button>

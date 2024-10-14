@@ -1,12 +1,27 @@
 import { LitElement, html } from "lit";
-import { customElement, property, state, queryAll } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
 import { computePosition, flip, shift } from "@floating-ui/dom";
 import mainStyles from "./TiptapEditor.css?inline";
 import remixicon from "remixicon/fonts/remixicon.css?inline";
 
+type ActionName =
+  | "textAlign"
+  | "bold"
+  | "italic"
+  | "underline"
+  | "textStyle"
+  | "bulletList"
+  | "orderList"
+  | "link"
+  | "unlink"
+  | "heading";
+
+type OpenActioinName = "open-heading" | "open-mergetag" | "open-color";
+
 type TiptapBtnProp = {
-  name: string;
+  name: ActionName | OpenActioinName;
   attr?: Record<string, string>;
   label: string;
   icon?: string;
@@ -18,8 +33,43 @@ export class TiptapEditor extends LitElement {
     return this; // Light DOMにする
   }
 
-  @property()
-  hoge: boolean = true;
+  @property({ type: Object })
+  state: {
+    [key in ActionName]: {
+      isActive: boolean;
+    };
+  } = {
+    textAlign: {
+      isActive: false,
+    },
+    bold: {
+      isActive: false,
+    },
+    italic: {
+      isActive: false,
+    },
+    underline: {
+      isActive: false,
+    },
+    textStyle: {
+      isActive: false,
+    },
+    bulletList: {
+      isActive: false,
+    },
+    orderList: {
+      isActive: false,
+    },
+    link: {
+      isActive: false,
+    },
+    unlink: {
+      isActive: false,
+    },
+    heading: {
+      isActive: false,
+    },
+  };
 
   @state()
   actionList: (
@@ -28,6 +78,10 @@ export class TiptapEditor extends LitElement {
       })
     | (TiptapBtnProp & {
         ui: "select";
+        list: TiptapBtnProp[];
+      })
+    | (TiptapBtnProp & {
+        ui: "select_color";
         list: TiptapBtnProp[];
       })
     | "separator"
@@ -74,6 +128,115 @@ export class TiptapEditor extends LitElement {
     },
     "separator",
     {
+      name: "open-color",
+      label: "文字色",
+      icon: "ri-font-color",
+      ui: "select_color",
+      list: [
+        {
+          name: "textStyle",
+          attr: { color: "#F94144" },
+          label: "Color 1",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#F3722C" },
+          label: "Color 2",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#F8961E" },
+          label: "Color 3",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#F9C74F" },
+          label: "Color 4",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#90BE6D" },
+          label: "Color 5",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#43AA8B" },
+          label: "Color 6",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#577590" },
+          label: "Color 7",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#003049" },
+          label: "Color 8",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#D62828" },
+          label: "Color 9",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#F77F00" },
+          label: "Color 10",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#FCBF49" },
+          label: "Color 11",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#EAE2B7" },
+          label: "Color 12",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#A8DADC" },
+          label: "Color 13",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#457B9D" },
+          label: "Color 14",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#1D3557" },
+          label: "Color 15",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#264653" },
+          label: "Color 16",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#2A9D8F" },
+          label: "Color 17",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#E9C46A" },
+          label: "Color 18",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#F4A261" },
+          label: "Color 19",
+        },
+        {
+          name: "textStyle",
+          attr: { color: "#E76F51" },
+          label: "Color 20",
+        },
+      ],
+    },
+    "separator",
+    {
       name: "bulletList",
       label: "箇条書き",
       icon: "ri-list-unordered",
@@ -107,39 +270,34 @@ export class TiptapEditor extends LitElement {
         {
           name: "heading",
           attr: { level: "1" },
-          label: "H1",
-          icon: "ri-h-1",
+          label: "Heading 1",
         },
         {
           name: "heading",
           attr: { level: "2" },
-          label: "H2",
-          icon: "ri-h-2",
+          label: "Heading 2",
         },
         {
           name: "heading",
           attr: { level: "3" },
-          label: "H3",
-          icon: "ri-h-3",
+          label: "Heading 3",
         },
       ],
     },
     {
-      name: "mergetag",
+      name: "open-mergetag",
       label: "差し込みタグ",
       ui: "btn_label",
     },
   ];
 
-  @queryAll(".options")
-  optionsElms!: NodeListOf<HTMLDivElement>;
-
-  toggleOptions = (btnElm: HTMLButtonElement) => {
+  toggleOptions = (btnElm: HTMLButtonElement, optionsSelector: string) => {
     const optionsElm =
-      btnElm.parentElement?.querySelector<HTMLDivElement>(".options");
+      btnElm.parentElement?.querySelector<HTMLDivElement>(optionsSelector);
     if (!optionsElm) {
       return;
     }
+    console.log("optionsElm", optionsElm);
     if (optionsElm.classList.contains("is-show")) {
       optionsElm.classList.remove("is-show");
       return;
@@ -165,7 +323,11 @@ export class TiptapEditor extends LitElement {
     const attr = tgtElm.dataset.attr || "";
     console.log(action);
     if (action.startsWith("open")) {
-      this.toggleOptions(tgtElm);
+      if (action === "open-color") {
+        this.toggleOptions(tgtElm, ".color_options");
+      } else {
+        this.toggleOptions(tgtElm, ".options");
+      }
     } else if (action) {
       const event = new CustomEvent("on-click-tiptap-editor", {
         detail: { action, attr: attr ? JSON.parse(attr) || null : null },
@@ -196,6 +358,12 @@ export class TiptapEditor extends LitElement {
                     "is-icon": action.ui === "btn_icon",
                     "is-label": action.ui === "btn_label",
                     "is-select": action.ui === "select",
+                    "is-active":
+                      action.name !== "open-heading" &&
+                      action.name !== "open-mergetag" &&
+                      action.name !== "open-color"
+                        ? this.state[action.name].isActive
+                        : false,
                   })}"
                 >
                   ${action.icon
@@ -225,6 +393,29 @@ export class TiptapEditor extends LitElement {
                         </button>`
                       )}
                     </div></div>`
+                  : ""}
+                ${action.ui === "select_color"
+                  ? html`<div class="color_options">
+                      <div class="color_options-inner">
+                        ${action.list.map(
+                          (option) => html`<button
+                            data-action="${option.name}"
+                            data-attr="${option.attr
+                              ? JSON.stringify(option.attr)
+                              : ""}"
+                            @click="${this.onBtnClick}"
+                            style="${styleMap({
+                              "background-color": option.attr?.color || "#000",
+                            })}"
+                            class="is-color"
+                          >
+                            ${option.icon
+                              ? html`<i class="${option.icon}"></i>`
+                              : ""}
+                          </button>`
+                        )}
+                      </div>
+                    </div>`
                   : ""}
               </div> `
         )}

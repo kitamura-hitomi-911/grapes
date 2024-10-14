@@ -31,6 +31,11 @@ button {
     line-height: 15px;
   }
 
+  &.is-active {
+    color: #2977ff;
+    background-color: #cae1fc;
+  }
+
   &.is-icon {
     width: 30px;
     > i {
@@ -50,6 +55,14 @@ button {
     gap: 4px;
   }
 
+  &.is-color {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .dropdown_icon {
     width: 20px;
     display: flex;
@@ -62,9 +75,9 @@ button:hover {
 }
 button:focus,
 button:focus-visible {
-  outline: 1px auto #00f;
-  border-width: 1px;
-  border-color: #646cff;
+  border: 1px solid #3779eb;
+  box-shadow: 0 0 0 3px #cae1fc;
+  outline: none;
 }
 
 .options {
@@ -74,8 +87,35 @@ button:focus-visible {
   position: absolute;
   top: 0;
   left: 0;
+  background-color: #fff;
+  border-radius: 2px;
+  border: 1px solid #ccced1;
+  box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.15);
 
   &.is-show {
     display: block;
+  }
+}
+.color_options {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 4px;
+  background-color: #fff;
+  border-radius: 2px;
+  border: 1px solid #ccced1;
+  box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.15);
+
+  &.is-show {
+    display: block;
+  }
+
+  .color_options-inner {
+    width: 108px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
   }
 }
