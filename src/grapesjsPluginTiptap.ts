@@ -292,6 +292,13 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
                     })
                     .run();
                   break;
+                case "unlink":
+                  tiptapEditor
+                    .chain()
+                    .focus()
+                    .insertContent("挿入したい文字列")
+                    .run();
+                  break;
                 case "bulletList":
                   tiptapEditor.chain().focus().toggleBulletList().run();
                   break;
