@@ -9,6 +9,7 @@ import Underline from "@tiptap/extension-underline";
 import Text from "@tiptap/extension-text";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
+import { FontSize } from "./FontSize";
 import Link from "@tiptap/extension-link";
 import ListItem from "@tiptap/extension-list-item";
 import BulletList from "@tiptap/extension-bullet-list";
@@ -220,6 +221,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
           Text,
           TextStyle,
           Color,
+          FontSize,
           Link,
           CustomAnchor,
           TextAlign.configure({
@@ -328,6 +330,14 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
                       .run();
                   } else {
                     tiptapEditor.chain().focus().unsetFontFamily().run();
+                  }
+                  break;
+                case "fontSize":
+                  const fontSize = attr?.size || "";
+                  if (fontSize) {
+                    tiptapEditor.chain().focus().setFontSize(fontSize).run();
+                  } else {
+                    tiptapEditor.chain().focus().unsetFontSize().run();
                   }
                   break;
                 case "color":
