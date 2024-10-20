@@ -14,6 +14,7 @@ import ListItem from "@tiptap/extension-list-item";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import TextAlign from "@tiptap/extension-text-align";
+import FontFamily from "@tiptap/extension-font-family";
 import { HardBreak } from "@tiptap/extension-hard-break";
 import { Editor as GrapesJSEditor } from "grapesjs";
 import { Indent } from "./indent";
@@ -225,6 +226,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
           OrderedList,
           ListItem,
           Indent,
+          FontFamily,
           HardBreak,
         ],
         content: el.innerHTML,
@@ -313,6 +315,18 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
                       level: Number(culcLevel) as 1 | 2 | 3 | 4 | 5 | 6,
                     })
                     .run();
+                  break;
+                case "fontFamily":
+                  const fontFamily = attr?.name || "";
+                  if (fontFamily) {
+                    tiptapEditor
+                      .chain()
+                      .focus()
+                      .setFontFamily(fontFamily)
+                      .run();
+                  } else {
+                    tiptapEditor.chain().focus().unsetFontFamily().run();
+                  }
                   break;
                 case "color":
                   tiptapEditor.chain().focus().setColor("#ff0000").run();

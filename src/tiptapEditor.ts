@@ -39,6 +39,12 @@ type HeadingBtnProp = {
   label: string;
   icon?: string;
 };
+type FontBtnProp = {
+  name: "fontFamily";
+  attr: { name: string };
+  label: string;
+  icon?: string;
+};
 type TextStyleBtnProp = {
   name: "textStyle";
   attr: { color?: string };
@@ -70,6 +76,13 @@ type OpenBtnProp =
       icon?: string;
       ui: "select";
       list: HeadingBtnProp[];
+    }
+  | {
+      name: "open-font";
+      label: string;
+      icon?: string;
+      ui: "select";
+      list: FontBtnProp[];
     }
   | {
       name: "open-mergetag";
@@ -369,24 +382,59 @@ export class TiptapEditor extends LitElement {
       ],
     },
     {
-      name: "open-heading",
+      name: "open-font",
       label: "フォント",
       ui: "select",
       list: [
         {
-          name: "heading",
-          attr: { level: "1" },
-          label: "Heading 1",
+          name: "fontFamily",
+          attr: { name: "" },
+          label: "(default)",
         },
         {
-          name: "heading",
-          attr: { level: "2" },
-          label: "Heading 2",
+          name: "fontFamily",
+          attr: { name: "Arial, Helvetica, sans-serif" },
+          label: "Arial",
         },
         {
-          name: "heading",
-          attr: { level: "3" },
-          label: "Heading 3",
+          name: "fontFamily",
+          attr: { name: "Helvetica, Arial, sans-serif" },
+          label: "Helvetica",
+        },
+        {
+          name: "fontFamily",
+          attr: { name: "Verdana, Geneva, sans-serif" },
+          label: "Verdana",
+        },
+        {
+          name: "fontFamily",
+          attr: { name: "Georgia, Times, Times New Roman, serif" },
+          label: "Georgia",
+        },
+        {
+          name: "fontFamily",
+          attr: { name: "Times New Roman, Times, serif" },
+          label: "Times New Roman",
+        },
+        {
+          name: "fontFamily",
+          attr: { name: "Tahoma, Geneva, sans-serif" },
+          label: "Tahoma",
+        },
+        {
+          name: "fontFamily",
+          attr: { name: "Trebuchet MS, Helvetica, sans-serif" },
+          label: "Trebuchet MS",
+        },
+        {
+          name: "fontFamily",
+          attr: { name: "Courier New, Courier, monospace" },
+          label: "Courier New",
+        },
+        {
+          name: "fontFamily",
+          attr: { name: "Lucida Console, Monaco, monospace" },
+          label: "Lucida Console",
         },
       ],
     },
@@ -515,6 +563,7 @@ export class TiptapEditor extends LitElement {
                     "is-select": action.ui === "select",
                     "is-active":
                       action.name !== "open-heading" &&
+                      action.name !== "open-font" &&
                       action.name !== "open-mergetag" &&
                       action.name !== "open-color" &&
                       action.name !== "open-link"
@@ -522,6 +571,7 @@ export class TiptapEditor extends LitElement {
                         : false,
                     "is-disabled":
                       action.name !== "open-heading" &&
+                      action.name !== "open-font" &&
                       action.name !== "open-mergetag" &&
                       action.name !== "open-color" &&
                       action.name !== "open-link"
