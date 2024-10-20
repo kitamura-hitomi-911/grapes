@@ -17,7 +17,6 @@ import TextAlign from "@tiptap/extension-text-align";
 import FontFamily from "@tiptap/extension-font-family";
 import { HardBreak } from "@tiptap/extension-hard-break";
 import { Editor as GrapesJSEditor } from "grapesjs";
-import { Indent } from "./indent";
 import "./tiptapEditor";
 
 const CustomHeading = Heading.extend({
@@ -178,11 +177,15 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
           },
           indent: {
             isActive: false,
-            isDisabled: !editor.isActive("listItem") || !editor.can().indent(),
+            isDisabled:
+              !editor.isActive("listItem") ||
+              !editor.can().sinkListItem("listItem"),
           },
           outdent: {
             isActive: false,
-            isDisabled: !editor.isActive("listItem") || !editor.can().outdent(),
+            isDisabled:
+              !editor.isActive("listItem") ||
+              !editor.can().liftListItem("listItem"),
           },
           link: {
             isActive: false,
@@ -225,7 +228,6 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
           BulletList,
           OrderedList,
           ListItem,
-          Indent,
           FontFamily,
           HardBreak,
         ],
@@ -355,10 +357,10 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
                   tiptapEditor.chain().focus().toggleOrderedList().run();
                   break;
                 case "indent":
-                  tiptapEditor.chain().focus().indent().run();
+                  tiptapEditor.chain().focus().sinkListItem("listItem").run();
                   break;
                 case "outdent":
-                  tiptapEditor.chain().focus().outdent().run();
+                  tiptapEditor.chain().focus().liftListItem("listItem").run();
                   break;
                 case "textAlign":
                   tiptapEditor
