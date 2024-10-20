@@ -16,6 +16,7 @@ import OrderedList from "@tiptap/extension-ordered-list";
 import TextAlign from "@tiptap/extension-text-align";
 import { HardBreak } from "@tiptap/extension-hard-break";
 import { Editor as GrapesJSEditor } from "grapesjs";
+import { Indent } from "./indent";
 import "./tiptapEditor";
 
 const CustomHeading = Heading.extend({
@@ -118,33 +119,51 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
         tiptapEditorUi.state = {
           textAlign: {
             isActive: false,
+            isDisabled: false,
           },
           bold: {
             isActive: editor?.isActive("bold") || false,
+            isDisabled: false,
           },
           italic: {
             isActive: editor?.isActive("italic") || false,
+            isDisabled: false,
           },
           underline: {
             isActive: editor?.isActive("underline") || false,
+            isDisabled: false,
           },
           textStyle: {
             isActive: false,
+            isDisabled: false,
           },
           bulletList: {
             isActive: false,
+            isDisabled: false,
           },
           orderList: {
             isActive: false,
+            isDisabled: false,
+          },
+          indent: {
+            isActive: false,
+            isDisabled: !editor.isActive("listItem") || !editor.can().indent(),
+          },
+          outdent: {
+            isActive: false,
+            isDisabled: !editor.isActive("listItem") || !editor.can().outdent(),
           },
           link: {
             isActive: false,
+            isDisabled: false,
           },
           unlink: {
             isActive: false,
+            isDisabled: false,
           },
           heading: {
             isActive: false,
+            isDisabled: false,
           },
         };
       };
@@ -170,6 +189,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
           BulletList,
           OrderedList,
           ListItem,
+          Indent,
           HardBreak,
         ],
         content: el.innerHTML,
@@ -277,6 +297,12 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
                   break;
                 case "orderList":
                   tiptapEditor.chain().focus().toggleOrderedList().run();
+                  break;
+                case "indent":
+                  tiptapEditor.chain().focus().indent().run();
+                  break;
+                case "outdent":
+                  tiptapEditor.chain().focus().outdent().run();
                   break;
                 case "textAlign":
                   tiptapEditor

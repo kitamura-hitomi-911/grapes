@@ -7,7 +7,15 @@ import mainStyles from "./TiptapEditor.css?inline";
 import remixicon from "remixicon/fonts/remixicon.css?inline";
 
 type SimpleBtnProp = {
-  name: "bold" | "italic" | "underline" | "bulletList" | "orderList" | "unlink";
+  name:
+    | "bold"
+    | "italic"
+    | "underline"
+    | "bulletList"
+    | "orderList"
+    | "unlink"
+    | "indent"
+    | "outdent";
   attr?: Record<string, string>;
   label: string;
   icon?: string;
@@ -84,37 +92,56 @@ export class TiptapEditor extends LitElement {
       | HeadingBtnProp["name"]
       | TextStyleBtnProp["name"]]: {
       isActive: boolean;
+      isDisabled: boolean;
     };
   } = {
     textAlign: {
       isActive: false,
+      isDisabled: false,
     },
     bold: {
       isActive: false,
+      isDisabled: false,
     },
     italic: {
       isActive: false,
+      isDisabled: false,
     },
     underline: {
       isActive: false,
+      isDisabled: false,
     },
     textStyle: {
       isActive: false,
+      isDisabled: false,
     },
     bulletList: {
       isActive: false,
+      isDisabled: false,
     },
     orderList: {
       isActive: false,
+      isDisabled: false,
+    },
+    indent: {
+      isActive: false,
+      isDisabled: false,
+    },
+    outdent: {
+      isActive: false,
+      isDisabled: false,
     },
     link: {
       isActive: false,
+      isDisabled: false,
     },
     unlink: {
       isActive: false,
+      isDisabled: false,
     },
     heading: {
       isActive: false,
+      isDisabled: false,
     },
   };
 
@@ -282,6 +309,18 @@ export class TiptapEditor extends LitElement {
       icon: "ri-list-ordered",
       ui: "btn_icon",
     },
+    {
+      name: "indent",
+      label: "インデント",
+      icon: "ri-indent-increase",
+      ui: "btn_icon",
+    },
+    {
+      name: "outdent",
+      label: "インデントを戻す",
+      icon: "ri-indent-decrease",
+      ui: "btn_icon",
+    },
     "separator",
     {
       name: "open-link",
@@ -444,6 +483,13 @@ export class TiptapEditor extends LitElement {
                       action.name !== "open-color" &&
                       action.name !== "open-link"
                         ? this.state[action.name].isActive
+                        : false,
+                    "is-disabled":
+                      action.name !== "open-heading" &&
+                      action.name !== "open-mergetag" &&
+                      action.name !== "open-color" &&
+                      action.name !== "open-link"
+                        ? this.state[action.name].isDisabled
                         : false,
                   })}"
                 >
