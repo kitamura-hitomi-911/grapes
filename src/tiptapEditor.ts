@@ -14,6 +14,7 @@ type SimpleBtnProp = {
     | "bulletList"
     | "orderList"
     | "unlink"
+    | "anchor"
     | "indent"
     | "outdent";
   attr?: Record<string, string>;
@@ -136,6 +137,10 @@ export class TiptapEditor extends LitElement {
       isDisabled: false,
     },
     unlink: {
+      isActive: false,
+      isDisabled: false,
+    },
+    anchor: {
       isActive: false,
       isDisabled: false,
     },
@@ -334,6 +339,12 @@ export class TiptapEditor extends LitElement {
       icon: "ri-link-unlink",
       ui: "btn_icon",
     },
+    {
+      name: "anchor",
+      label: "アンカータグ",
+      icon: "ri-flag-line",
+      ui: "btn_icon",
+    },
     "separator",
     {
       name: "open-heading",
@@ -442,6 +453,31 @@ export class TiptapEditor extends LitElement {
     if (action.startsWith("open")) {
       if (action === "open-color") {
         this.toggleOptions(tgtElm, ".color_options");
+      } else if (action === "open-link") {
+        const event = new CustomEvent("on-click-tiptap-editor", {
+          detail: {
+            action: "link",
+            attr: {
+              href: "https://example.com",
+              target: "_blank",
+            },
+          },
+          bubbles: true,
+        });
+        // カスタムイベントを発火
+        this.dispatchEvent(event);
+      } else if (action === "open-mergetag") {
+        const event = new CustomEvent("on-click-tiptap-editor", {
+          detail: {
+            action: "mergetag",
+            attr: {
+              string: "hoge",
+            },
+          },
+          bubbles: true,
+        });
+        // カスタムイベントを発火
+        this.dispatchEvent(event);
       } else {
         this.toggleOptions(tgtElm, ".options");
       }

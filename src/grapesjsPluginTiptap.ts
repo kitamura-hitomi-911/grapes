@@ -96,6 +96,36 @@ const CustomDiv = Node.create({
   },
 });
 
+const CustomAnchor = Node.create({
+  name: "customAnchor",
+  inline: true,
+  group: "inline",
+  atom: true,
+
+  addAttributes() {
+    return {
+      name: {
+        default: null,
+      },
+      id: {
+        default: null,
+      },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: "a[name]:not([href])",
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return ["a", HTMLAttributes];
+  },
+});
+
 // https://github.com/ueberdosis/tiptap/issues/118
 // li の中の p は編集上必要なので消えない
 
@@ -161,6 +191,10 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
             isActive: false,
             isDisabled: false,
           },
+          anchor: {
+            isActive: false,
+            isDisabled: false,
+          },
           heading: {
             isActive: false,
             isDisabled: false,
@@ -183,6 +217,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
           TextStyle,
           Color,
           Link,
+          CustomAnchor,
           TextAlign.configure({
             types: ["heading", "paragraph", "customDiv"],
           }),
@@ -283,21 +318,21 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
                   tiptapEditor.chain().focus().setColor("#ff0000").run();
                   break;
                 case "link":
-                  tiptapEditor
-                    .chain()
-                    .focus()
-                    .toggleLink({
-                      href: "https://example.com",
-                      target: "_blank",
-                    })
-                    .run();
+                  const href = attr?.href || "";
+                  const target = attr?.target || "";
+                  if (href && target) {
+                    tiptapEditor
+                      .chain()
+                      .focus()
+                      .toggleLink({
+                        href,
+                        target,
+                      })
+                      .run();
+                  }
                   break;
                 case "unlink":
-                  tiptapEditor
-                    .chain()
-                    .focus()
-                    .insertContent("挿入したい文字列")
-                    .run();
+                  tiptapEditor.chain().focus().unsetLink().run();
                   break;
                 case "bulletList":
                   tiptapEditor.chain().focus().toggleBulletList().run();
@@ -317,6 +352,26 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
                     .focus()
                     .setTextAlign(attr?.alignment || "left")
                     .run();
+                  break;
+                case "anchor":
+                  const from = tiptapEditor.state.selection.from;
+                  const name = attr?.name || "hoge";
+                  if (name) {
+                    tiptapEditor
+                      .chain()
+                      .focus()
+                      .insertContentAt(from, {
+                        type: "customAnchor",
+                        attrs: { name: name, id: name },
+                      })
+                      .run();
+                  }
+                  break;
+                case "mergetag":
+                  const string = attr?.string || "";
+                  if (string) {
+                    tiptapEditor.chain().focus().insertContent(string).run();
+                  }
                   break;
               }
             }
