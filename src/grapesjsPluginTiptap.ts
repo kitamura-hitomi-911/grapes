@@ -135,6 +135,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
   let tiptapToolbar: HTMLDivElement | null;
   const tiptapEditorUi: HTMLElementTagNameMap["tiptap-editor"] =
     document.createElement("tiptap-editor");
+  let resizeObserver: ResizeObserver | null = null;
 
   grapesjsEditor.setCustomRte({
     enable: (el: HTMLElement, rte: Editor | null) => {
@@ -243,11 +244,23 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
         onCreate: ({ editor }) => {
           el.style.display = "none";
           editor.view.dom.classList.remove("is-hide");
+
+          resizeObserver = new ResizeObserver(() => {
+            setTimeout(() => {
+              grapesjsEditor.refresh();
+            }, 0);
+          });
+          resizeObserver.observe(editor.view.dom);
+
           grapesjsEditor.refresh(); // これ必要だったよ
           tiptapEditorUi.isShow = true;
         },
         onDestroy: () => {
           el.style.display = "block";
+          if (resizeObserver) {
+            resizeObserver.disconnect();
+            resizeObserver = null;
+          }
         },
         onUpdate: ({ editor }) => {
           updateIsActive(editor);
