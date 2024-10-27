@@ -15,6 +15,7 @@
   "dependencies": {
     "@floating-ui/dom": "^1.6.11",
     "@fortawesome/fontawesome-free": "^6.6.0",
+    "@simonwep/pickr": "^1.9.1",
     "@tiptap/core": "^2.8.0",
     "@tiptap/extension-bold": "^2.8.0",
     "@tiptap/extension-bullet-list": "^2.8.0",

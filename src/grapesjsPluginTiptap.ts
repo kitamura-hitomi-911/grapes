@@ -244,6 +244,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
           el.style.display = "none";
           editor.view.dom.classList.remove("is-hide");
           grapesjsEditor.refresh(); // これ必要だったよ
+          tiptapEditorUi.isShow = true;
         },
         onDestroy: () => {
           el.style.display = "block";
@@ -418,6 +419,7 @@ const tiptapRTEPlugin = (grapesjsEditor: GrapesJSEditor) => {
       if (rte) {
         console.log("きた？", el, rte);
         rte.destroy();
+        tiptapEditorUi.isShow = false;
       }
     },
 

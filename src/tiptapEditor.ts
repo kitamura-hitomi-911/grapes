@@ -1,10 +1,11 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { computePosition, flip, shift } from "@floating-ui/dom";
 import mainStyles from "./TiptapEditor.css?inline";
 import remixicon from "remixicon/fonts/remixicon.css?inline";
+import "./ColorPicker";
 
 type SimpleBtnProp = {
   name:
@@ -69,12 +70,15 @@ type OpenBtnProp =
       icon?: string;
       ui: "select_color";
       list: TextStyleBtnProp[];
+      isOpen: boolean;
+      isColorPickerOpen: boolean;
     }
   | {
       name: "open-link";
       label: string;
       icon?: string;
       ui: "btn_icon";
+      isOpen: boolean;
     }
   | {
       name: "open-heading";
@@ -82,6 +86,7 @@ type OpenBtnProp =
       icon?: string;
       ui: "select";
       list: HeadingBtnProp[];
+      isOpen: boolean;
     }
   | {
       name: "open-fontFamily";
@@ -89,6 +94,7 @@ type OpenBtnProp =
       icon?: string;
       ui: "select";
       list: FontFamilyBtnProp[];
+      isOpen: boolean;
     }
   | {
       name: "open-fontSize";
@@ -96,12 +102,14 @@ type OpenBtnProp =
       icon?: string;
       ui: "select";
       list: FontSizeBtnProp[];
+      isOpen: boolean;
     }
   | {
       name: "open-mergetag";
       label: string;
       icon?: string;
       ui: "btn_label";
+      isOpen: boolean;
     };
 
 @customElement("tiptap-editor")
@@ -109,6 +117,9 @@ export class TiptapEditor extends LitElement {
   createRenderRoot() {
     return this; // Light DOMにする
   }
+
+  @property({ type: Object })
+  isShow: boolean = false;
 
   @property({ type: Object })
   state: {
@@ -175,6 +186,9 @@ export class TiptapEditor extends LitElement {
       isDisabled: false,
     },
   };
+
+  @state()
+  isShowColorPicker: boolean = false;
 
   @state()
   actionList: (BtnProp | OpenBtnProp | "separator")[] = [
@@ -326,6 +340,8 @@ export class TiptapEditor extends LitElement {
           label: "Color 20",
         },
       ],
+      isOpen: false,
+      isColorPickerOpen: false,
     },
     "separator",
     {
@@ -358,6 +374,7 @@ export class TiptapEditor extends LitElement {
       label: "リンク",
       icon: "ri-link",
       ui: "btn_icon",
+      isOpen: false,
     },
     {
       name: "unlink",
@@ -393,6 +410,7 @@ export class TiptapEditor extends LitElement {
           label: "Heading 3",
         },
       ],
+      isOpen: false,
     },
     {
       name: "open-fontFamily",
@@ -450,6 +468,7 @@ export class TiptapEditor extends LitElement {
           label: "Lucida Console",
         },
       ],
+      isOpen: false,
     },
     {
       name: "open-fontSize",
@@ -503,48 +522,113 @@ export class TiptapEditor extends LitElement {
           label: "24",
         },
       ],
+      isOpen: false,
     },
     {
       name: "open-mergetag",
       label: "差し込みタグ",
       ui: "btn_label",
+      isOpen: false,
     },
   ];
 
-  toggleOptions = (btnElm: HTMLButtonElement, optionsSelector: string) => {
-    const optionsElm =
-      btnElm.parentElement?.querySelector<HTMLDivElement>(optionsSelector);
-    if (!optionsElm) {
-      return;
-    }
-    console.log("optionsElm", optionsElm);
-    if (optionsElm.classList.contains("is-show")) {
-      optionsElm.classList.remove("is-show");
-      return;
-    }
-    optionsElm.classList.add("is-show");
-    computePosition(btnElm, optionsElm, {
-      placement: "bottom-start",
-      middleware: [flip(), shift()],
-    }).then(({ x, y }) => {
-      console.log(x, y);
-      Object.assign(optionsElm.style, {
-        left: `${x}px`,
-        top: `${y}px`,
-      });
+  resetOpen = () => {
+    console.log("resetOpen");
+    this.actionList = this.actionList.map((action) => {
+      if (typeof action === "string") {
+        return action;
+      }
+      if (action.name === "open-color") {
+        return {
+          ...action,
+          isOpen: false,
+          isColorPickerOpen: false,
+        };
+      }
+      return action.name === "open-fontFamily" ||
+        action.name === "open-heading" ||
+        action.name === "open-fontSize" ||
+        action.name === "open-link"
+        ? {
+            ...action,
+            isOpen: false,
+          }
+        : action;
+    });
+  };
+
+  openColorPicker = (e: Event) => {
+    e.preventDefault();
+    console.log(e);
+    this.actionList = this.actionList.map((action) => {
+      if (typeof action !== "string" && action.name === "open-color") {
+        return { ...action, isColorPickerOpen: true };
+      }
+      return action;
     });
   };
 
   onBtnClick = (e: Event) => {
     e.preventDefault();
-    console.log(e);
     const tgtElm = e.currentTarget as HTMLButtonElement;
     const action = tgtElm.dataset.action || "";
     const attr = tgtElm.dataset.attr || "";
-    console.log(action);
+    console.log("onBtnClick", action);
     if (action.startsWith("open")) {
-      if (action === "open-color") {
-        this.toggleOptions(tgtElm, ".color_options");
+      if (
+        action === "open-color" ||
+        action === "open-fontSize" ||
+        action === "open-fontFamily" ||
+        action === "open-heading"
+      ) {
+        console.log("ここきた");
+        this.actionList = this.actionList.map((actionData) => {
+          if (typeof actionData === "string") {
+            return actionData;
+          }
+          if (
+            actionData.name === "open-color" ||
+            actionData.name === "open-fontSize" ||
+            actionData.name === "open-fontFamily" ||
+            actionData.name === "open-heading"
+          ) {
+            if (actionData.name === action) {
+              return {
+                ...actionData,
+                isOpen: !actionData.isOpen,
+                ...(actionData.name === "open-color"
+                  ? { isColorPickerOpen: false }
+                  : {}),
+              };
+            } else {
+              console.log("isOpenを閉じた", action);
+              return {
+                ...actionData,
+                isOpen: false,
+                ...(actionData.name === "open-color"
+                  ? { isColorPickerOpen: false }
+                  : {}),
+              };
+            }
+          }
+          return actionData;
+        });
+        console.log(this.actionList);
+        const optionsElm = tgtElm.parentElement?.querySelector<HTMLDivElement>(
+          action === "open-color" ? ".color_options" : ".options"
+        );
+        if (optionsElm) {
+          computePosition(tgtElm, optionsElm, {
+            placement: "bottom-start",
+            middleware: [flip(), shift()],
+          }).then(({ x, y }) => {
+            console.log(x, y);
+            Object.assign(optionsElm.style, {
+              left: `${x}px`,
+              top: `${y}px`,
+            });
+          });
+        }
       } else if (action === "open-link") {
         const event = new CustomEvent("on-click-tiptap-editor", {
           detail: {
@@ -570,10 +654,9 @@ export class TiptapEditor extends LitElement {
         });
         // カスタムイベントを発火
         this.dispatchEvent(event);
-      } else {
-        this.toggleOptions(tgtElm, ".options");
       }
     } else if (action) {
+      this.resetOpen();
       const event = new CustomEvent("on-click-tiptap-editor", {
         detail: { action, attr: attr ? JSON.parse(attr) || null : null },
         bubbles: true,
@@ -583,6 +666,21 @@ export class TiptapEditor extends LitElement {
       this.dispatchEvent(event);
     }
   };
+
+  willUpdate(changedProperties: PropertyValues) {
+    // only need to check changed properties for an expensive computation.
+    if (changedProperties.has("isShow")) {
+      if (!this.isShow) {
+        this.resetOpen();
+      }
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    console.log("きてる？disconnectedCallback");
+  }
 
   render() {
     return html`<style>
@@ -635,7 +733,10 @@ export class TiptapEditor extends LitElement {
                     : ""}
                 </button>
                 ${action.ui === "select"
-                  ? html`<div class="options">
+                  ? html`<div class="${classMap({
+                      options: true,
+                      "is-open": action.isOpen,
+                    })}">
                       ${action.list.map(
                         (option) => html`<button
                           data-action="${option.name}"
@@ -654,25 +755,47 @@ export class TiptapEditor extends LitElement {
                     </div></div>`
                   : ""}
                 ${action.ui === "select_color"
-                  ? html`<div class="color_options">
-                      <div class="color_options-inner">
-                        ${action.list.map(
-                          (option) => html`<button
-                            data-action="${option.name}"
-                            data-attr="${option.attr
-                              ? JSON.stringify(option.attr)
-                              : ""}"
-                            @click="${this.onBtnClick}"
-                            style="${styleMap({
-                              "background-color": option.attr?.color || "#000",
-                            })}"
-                            class="is-color"
+                  ? html`<div
+                      class="${classMap({
+                        color_options: true,
+                        "is-open": action.isOpen,
+                      })}"
+                    >
+                      <color-picker
+                        .isShow="${action.isColorPickerOpen}"
+                      ></color-picker>
+                      <div
+                        class="${classMap({
+                          "color_options-inner": true,
+                          "is-hide": action.isColorPickerOpen,
+                        })}"
+                      >
+                        <div class="color_options-clear">自動</div>
+                        <div class="color_options-panels">
+                          ${action.list.map(
+                            (option) => html`<button
+                              data-action="${option.name}"
+                              data-attr="${option.attr
+                                ? JSON.stringify(option.attr)
+                                : ""}"
+                              @click="${this.onBtnClick}"
+                              style="${styleMap({
+                                "background-color":
+                                  option.attr?.color || "#000",
+                              })}"
+                              class="is-color"
+                            >
+                              ${option.icon
+                                ? html`<i class="${option.icon}"></i>`
+                                : ""}
+                            </button>`
+                          )}
+                        </div>
+                        <div class="color_options-more">
+                          <a href="#" @click="${this.openColorPicker}"
+                            >他の色</a
                           >
-                            ${option.icon
-                              ? html`<i class="${option.icon}"></i>`
-                              : ""}
-                          </button>`
-                        )}
+                        </div>
                       </div>
                     </div>`
                   : ""}
