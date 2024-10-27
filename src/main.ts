@@ -11,6 +11,7 @@ import grapesjsPluginTiptap from "./grapesjsPluginTiptap";
 import ja from "./ja.js";
 // @ts-ignore
 import mjmlJa from "./mjml-ja.js";
+import prosemirrorStyle from "prosemirror-view/style/prosemirror.css?inline";
 import "./style.css";
 
 declare var CKEDITOR: any;
@@ -96,5 +97,11 @@ editor.on("load", () => {
     const newClassName = baseClassName.replace("fa-square-o", "far fa-square");
     visibilityBtn.set({ className: newClassName });
   }
+
+  const iframe = editor.Canvas.getFrameEl();
+  const iframeHead = iframe.contentDocument?.head;
+  const styleTag = document.createElement("style");
+  styleTag.textContent = prosemirrorStyle;
+  iframeHead?.appendChild(styleTag);
 });
 console.log(editor);
